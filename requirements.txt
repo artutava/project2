@@ -1,0 +1,5 @@
+flask_socketio
+libgravatar
+requests
+flask
+json
