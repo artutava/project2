@@ -31,7 +31,7 @@
       </div>
       <div class="col align-items-center">
       <div class="chat_area">
-        <h2 id="title_room">{{your_room}}</h2>
+        <h2 id="title_room">{{your_room}} ÉEE ISSO AÍ VÊE (utf 8 is working here, but not in the chat)</h2>
       <div id="chat_scroll">
         <ul id="chatbox">
         {% for each in rooms[your_room]['messages'] %}
@@ -49,8 +49,13 @@
                                       
                       <div class="row justify-content-center"></div>
                         <form id='message_form'>
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="#emojis">@</span>
+                              </div>
                           <div class="input-group">
-                            <input name="message_field" type="text" id="message_field" class="form-control" placeholder="type your message" data-emoji-picker="true">
+                              
+                            <input name="message_field" type="text" id="message_field" class="form-control" placeholder="type your message" >
+                            
                             <div class="input-group-append">
                               <button id="send_button" class="btn btn-outline-secondary" type='submit'>Send</button>
                             </div>
@@ -59,6 +64,7 @@
                        </form>
                   
                   </div>
+                  
       
       </div>
 
