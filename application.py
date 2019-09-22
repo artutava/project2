@@ -28,8 +28,8 @@ socketio = SocketIO(app)
 
 
 user_list=[]
-rooms={'main':{'users':[],'messages':[]}}
-
+rooms={'#main':{'users':[],'messages':[]}}
+user_room={}
 
 
 
@@ -49,24 +49,28 @@ def index():
 
 
 @app.route("/chat")
-def chat():
-    print('your room is:',session['room'])
-    return render_template("index.html", current_user= session['username'], current_room= session['room'], rooms=rooms, )
+def chat():  
+    your_room= user_room.get(session['username'])
+    if your_room is None:
+            your_room = '#main'
+    print(user_room)
+    return render_template("index.html", current_user= session['username'], current_room= user_room.get(session['username']), rooms=rooms, your_room=your_room  )
 
 
 
 @app.route('/login', methods=['POST'])
 def login():
     username=request.form.get('username')
-    if username not in user_list:
-        session['logged_in'] = True
-        session['username'] = username
-        user_list.append(session['username'])
-        session['room'] = 'main'
-        room_users=rooms['main']['users']
-        room_users.append(session['username'])
-        print(user_list)
-    return index()
+    if not session.get('logged_in'):
+        if username not in user_list:
+            session['logged_in'] = True
+            session['username'] = username
+            user_list.append(session['username'])
+            room_users=rooms['#main']['users']
+            room_users.append(session['username'])
+            user_room[session['username']]='#main'
+            print(user_list)
+    return chat()
 
 
 @app.route("/logout")
@@ -75,31 +79,33 @@ def logout():
         user_list.remove(session['username'])
     session['logged_in'] = False
     session['username'] = 'anonymous'
-    session['room'] = 'main'
+    
     print(user_list)
     return index()
 
 
 @socketio.on("incoming msg")
 def send_message(data):
-    room = session['room']
+    room = user_room.get(session['username'])
     username=session['username']
     msg=data['msg']
+    named_tuple = time.localtime() # get struct_time
+    time_string = time.strftime("%m/%d/%Y, %H:%M:%S", named_tuple)
     #form message dictionary
-    message_line={'message': msg, 'username': username}
+    message_line={'message': msg, 'username': username, 'hour':time_string}
     #append dictionary to list which is the value of each room inside rooms dictionary
     room_messages=rooms[room]['messages']
     room_messages.append(message_line)
     print('printed:'+msg)
     #send info to js
-    emit("display_message", {'username': username, 'room': room, 'msg': msg}, broadcast=True)
+    emit("display_message", {'username': username, 'room': room, 'msg': msg, 'hour': time_string}, broadcast=True)
     print('emited:'+msg)
     print(rooms)
     return False
 
 @socketio.on("create room")
 def create_room(data):
-    new_room = data['room_name']
+    new_room = '#' + data['room_name']
     username=session['username']
     #form message dictionary
     print('room name received:'+ new_room)
@@ -112,7 +118,7 @@ def create_room(data):
         emit("insert_room", {'new_room': new_room}, broadcast=True)
         print('room emited to js')
         print(rooms)
-    return False
+    
 
 
 @socketio.on("join room")
@@ -122,12 +128,12 @@ def join_room(data):
     #form message dictionary
     
     room_selection = data['room_selection']
-    session['room'] = data['room_selection']
+    user_room[session['username']]=room_selection
     print(room_selection)
-    print('current room:' + session['room'])
-    print(username, 'joined:',session['room'])
+    print(username, 'joined:', user_room.get(session['username']))
     emit("change room", {'room_selection': room_selection}, broadcast=True)
     print('room change emmited to js')
+    print(user_room)
     return index()
 
 if __name__ == '__main__':

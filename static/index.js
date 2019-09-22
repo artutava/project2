@@ -12,20 +12,20 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('connect', () => {
 
         // send message
-        document.querySelector('#send_button').onclick = () => {
+        document.querySelector('#message_form').onsubmit = () => {
             msg= document.querySelector('#message_field').value;
             socket.emit('incoming msg', {'msg': msg});
-            
+            return false;
             
             
         }
 
 
         // button for creating room
-        document.querySelector('#cr_room').onclick = () => {
+        document.querySelector('#room_form').onsubmit = () => {
             room_name= document.querySelector('#cr_room_name').value;
             socket.emit('create room', {'room_name': room_name});
-            
+            return false;
             
             
         }
@@ -41,11 +41,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // When display messages come in
     socket.on('display_message', data => {
         const li = document.createElement('li');
-        li.innerHTML = `Message: ${data.room} ${data.username} said: ${data.msg}`;
+        li.innerHTML = `<span class="usermark"> ${data.username} </span> <span class="time"> ${data.hour} </span> </br> <span class="usermessage"> ${data.msg} </span> `;
         document.querySelector('#chatbox').append(li);
         document.querySelector('#message_field').value = '';
+        const smsg = document.querySelector('#chat_scroll');
+        smsg.scrollTop = smsg.scrollHeight;
         
     });
+
+    //automatic scroll, when loaded page
+    const smsg = document.querySelector('#chat_scroll');
+    const sbox = document.querySelector('#chatbox');
+    if (sbox > smsg) {
+        smsg.scrollTop = smsg.scrollHeight;
+
+    }
+    
 
     // When room info come
     socket.on('insert_room', data => {
@@ -54,11 +65,19 @@ document.addEventListener('DOMContentLoaded', () => {
         li.className = 'room_click';
         li.innerHTML = new_room_name;
         li.dataset.channel = new_room_name;
-        
         document.querySelector('#roomsbox').append(li);
         document.querySelector('#cr_room_name').value = '';
+        window.location.reload();
+        
         
     });
+
+    // When room info come
+    socket.on('change room', data => {
+        window.location.reload();
+        
+    });
+
 
     
 

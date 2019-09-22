@@ -1,47 +1,68 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="bg_index"></div>
-<div id="rooms_container">
-  <div id="create room">
-      <input name="cr_room_name" type="text" id="cr_room_name" class="form-control" placeholder="New channel">
-      <button id="cr_room">create</button>
-      </button>
-  </div>
-  <ul id="roomsbox">
-    {% for key in rooms %}
-    <li class="room_click" data-channel={{key}}>{{key}}</li>
-    {% endfor %}
-  
-  </ul>
+<div class="row">
 
-</div>
-<div class="row align-items-center">
-<div class="chat_area">
-  <h2 id="title_room">{{session["room"]}}</h2>
-<ul id="chatbox">
-{% for each in rooms[session['room']]['messages'] %}
-<li>
-  {{each.get('username')}} said: {{each.get('message')}}
-</li>
-{% endfor %}
-</ul>
+    <div class="col-md-3"id="rooms_container">
+        <div id="create room">
+          <form id='room_form'>
+            <div class="input-group ">
 
-</div>
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">#</span>
+                  </div>
+            <input name="cr_room_name" type="text" id="cr_room_name" class="form-control" placeholder="New channel" aria-describedby="cr_room">
 
-        <div class="type_area">
-                        
-                                
-                <div class="row justify-content-center"></div>
-                
-                      <input name="message_field" type="text" id="message_field" class="form-control" placeholder="type your message">
-                      <div class="input-group-append">
-                        <div id="send_button" class="btn btn-outline-secondary">Send</div>
-                      </div>
-                  
-            
-            
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type='submit' id="cr_room">create</button>
+              </div>
             </div>
+            
+          </form>
+            
+        </div>
+        <ul id="roomsbox">
+          {% for key in rooms %}
+          <li class="room_click" data-channel={{key}}>{{key}}</li>
+          {% endfor %}
+        
+        </ul>
+      
+      </div>
+      <div class="col align-items-center">
+      <div class="chat_area">
+        <h2 id="title_room">{{your_room}}</h2>
+      <div id="chat_scroll">
+        <ul id="chatbox">
+        {% for each in rooms[your_room]['messages'] %}
+        <li>
+          <span class="usermark">{{each.get('username')}} </span><span class="time"> {{each.get('hour')}}</span> </br> <span class="usermessage">{{each.get('message')}}</span>
+        </li>
+        {% endfor %}
+        </ul>
+      </div>
+      
+      </div>
+      
+              <div class="type_area">
+                              
+                                      
+                      <div class="row justify-content-center"></div>
+                        <form id='message_form'>
+                          <div class="input-group">
+                            <input name="message_field" type="text" id="message_field" class="form-control" placeholder="type your message" data-emoji-picker="true">
+                            <div class="input-group-append">
+                              <button id="send_button" class="btn btn-outline-secondary" type='submit'>Send</button>
+                            </div>
+                            
+                          </div>
+                       </form>
+                  
+                  </div>
+      
+      </div>
 
 </div>
+
 
 {% endblock %}

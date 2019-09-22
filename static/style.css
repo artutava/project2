@@ -1,0 +1,47 @@
+body {
+    overflow:hidden;
+}
+
+#chatbox li {
+    list-style: none;
+    background: #f7f7f7;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+
+ul#chatbox {
+    padding: 0px;
+  
+}
+
+#chat_scroll {
+    height: 80vh;
+    overflow-y: scroll;
+}
+
+div#rooms_container {
+    background: #364d77;
+    color: #fff;
+    padding-left: 35px;
+    padding-right: 20px;
+    padding-top: 20px;
+}
+ul#roomsbox {
+    list-style: none;
+    padding: 0px;
+    font-size: 20px;
+    font-weight: 100;
+}
+
+.type_area {
+    padding-right: 17px;
+    padding-top: 10px;
+    background:#fff;
+}
+
+span.usermark {
+    color: #364d77;
+    font-weight: 500;
+    font-size: 20px;
+}
